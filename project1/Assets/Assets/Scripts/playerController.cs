@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playeController : MonoBehaviour
+public class playerController : MonoBehaviour
 {
     //speed is a multiplier used to control actual speed of player
     public float speed;
@@ -26,7 +26,18 @@ public class playeController : MonoBehaviour
         float y = Input.GetAxis("Vertical");
         float x = Input.GetAxis("Horizontal");
         myDir = new Vector3(x, y, 0); //combining them into one vector
-        Debug.Log(myDir);
+                                      // Debug.Log(myDir);
         return myDir; //return the value
+    }
+    public void onCollisionEnter2D(Collision2D Collision)
+    {
+        Debug.Log("other " + Collision.gameObject.name);
+        Debug.Log("other tag " + Collision.gameObject.tag);
+        if (Collision.gameObject.tag == "collectible1")
+        {
+            
+
+        }
+
     }
 }

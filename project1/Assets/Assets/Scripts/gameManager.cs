@@ -37,11 +37,5 @@ public class gameManager : MonoBehaviour
             Instantiate(collectible1, targetPos, Quaternion.identity);
             spawnTimer = 0;
         }
-        public void onCollisionEnter2D(Collision 2D collision) {
-            Debug.Log("other " + collision.gameObject.name);
-            Debug.Log("other tag " + collision.gameObject.tag);
-
-            if(collision.gameObject.tag == colectible)
-        }
     }
 }
