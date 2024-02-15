@@ -34,6 +34,7 @@ public class gameManager : MonoBehaviour
     {
         myGameState = GameState.GAMESTART;
         myPlayer.SetActive(false);
+        collectible1.SetActive(false);
         TitleText.text = "Press [SPACE] to start";
     }
 
@@ -95,16 +96,19 @@ public class gameManager : MonoBehaviour
     void EnterPlaying()
     {
         timer = 0f;
+        collectible1.SetActive(true);
         myGameState = GameState.PLAYING;
         myPlayer.SetActive(true);
         TitleText.enabled = false;
+        myPlayer.transform.position = new Vector3(0f, -3.5f, 0f); 
     }
 
     void EnterFinale()
     {
-        myGameState = GameState.GAMEOVER;
         myPlayer.SetActive(false);
         TitleText.enabled = true;
+        myGameState = GameState.GAMEOVER;
         TitleText.text = "CONGRATS, You Survived. Press [SPACE] to restart";
+        
     }
 }
