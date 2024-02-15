@@ -119,3 +119,5 @@ public class gameManager : MonoBehaviour
         
     }
 }
+
+//newObj.GetComponent<enemyController>().myPlayer = myPlayer; 
