@@ -17,7 +17,7 @@ public class gameManager : MonoBehaviour
     public float spawnTimer;
     public Vector2 spawnXBounds;
     public Vector2 spawnYBounds;
-
+    public Rigidbody2D myBody; 
     [Header("UI/UX Vars")]
     public TextMeshProUGUI TitleText;
 
@@ -95,6 +95,13 @@ public class gameManager : MonoBehaviour
     //state change for playing mode, turn on players, disable any start menu logic
     void EnterPlaying()
     {
+        GameObject[] enemyObj = GameObject.FindGameObjectsWithTag("projectile");
+        
+        for (int i = 0; 1 < enemyObj.Length; i++) 
+        {
+            Destroy(enemyObj[i]);
+        }
+
         timer = 0f;
         collectible1.SetActive(true);
         myGameState = GameState.PLAYING;
