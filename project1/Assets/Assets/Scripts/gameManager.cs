@@ -13,8 +13,8 @@ public class gameManager : MonoBehaviour
     public playerController alive;
 
     [Header("NPC vars")]
-    public GameObject collectible;
     public GameObject projectile;
+    public GameObject collectible;
     public float projectileTimer;
     public float projectileInterval;
     public float collectibleTimer;
@@ -23,9 +23,9 @@ public class gameManager : MonoBehaviour
     public Vector2 spawnYBounds1;
     public Vector2 spawnXBounds2;
     public Vector2 spawnYBounds2;
-    public Rigidbody2D myBody; 
     [Header("UI/UX Vars")]
     public TextMeshProUGUI TitleText;
+    public TextMeshProUGUI TimerText;
 
     //to design a state machine, first we need to define a subclass of enum - GameState
     public enum GameState
@@ -41,7 +41,8 @@ public class gameManager : MonoBehaviour
         myGameState = GameState.GAMESTART;
         myPlayer.SetActive(false);
         collectible.SetActive(false);
-        TitleText.text = "Press [SPACE] to start";
+        TitleText.text = "Use [A] [S] to move. Press [SPACE] to start";
+
     }
 
     // Update is called once per frame
@@ -79,7 +80,8 @@ public class gameManager : MonoBehaviour
                 float x2 = Random.Range(spawnXBounds2.x, spawnXBounds2.y);
                 float y2 = Random.Range(spawnYBounds2.x, spawnYBounds2.y);
                 Vector3 targetPos1 = new Vector3(x1, y1, 0);
-                Vector3 targetPos2 = new Vector3(x2, y2, 0);
+                Vector3 targetPos2 = new Vector3(x2, y2, 0); 
+                
 
                 //instantiate and reset timer when condition is met
                 if (collectibleTimer > collectibleInterval)
@@ -108,6 +110,10 @@ public class gameManager : MonoBehaviour
             
             case GameState.LOSTSCREEN:
                 //code for losing the game
+                Destroy(GameObject.FindWithTag("collectible"));
+                Destroy(GameObject.FindWithTag("projectile"));
+                collectible.SetActive(false);
+                projectile.SetActive(false);
                 if (Input.GetKey(KeyCode.Space))
                 {
                     EnterPlaying();
@@ -135,17 +141,19 @@ public class gameManager : MonoBehaviour
         myGameState = GameState.PLAYING;
         myPlayer.SetActive(true);
         TitleText.enabled = false;
+        TimerText.enabled = true;
+        TimerText.text = timer.ToString("F0");
         myPlayer.transform.position = new Vector3(0f, -3.5f, 0f); 
     }
 
     void LostScreen()
     {
-        collectible.SetActive(false);
-        projectile.SetActive(false);
         TitleText.enabled = true;
+        TimerText.enabled = false;
         TitleText.text = "YOU LOST. Press [SPACE] to try again.";
         myPlayer.SetActive(false);
         myGameState = GameState.LOSTSCREEN;
+        Debug.Log(timer.ToString());
          
 
     }
@@ -154,8 +162,10 @@ public class gameManager : MonoBehaviour
     {
         myPlayer.SetActive(false);
         TitleText.enabled = true;
+        TimerText.enabled = false;
         myGameState = GameState.GAMEOVER;
         TitleText.text = "CONGRATS, You Survived. Press [SPACE] to restart";
+        
         
     }
 }
