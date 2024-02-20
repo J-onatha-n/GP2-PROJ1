@@ -7,6 +7,7 @@ public class playerController : MonoBehaviour
     //speed is a multiplier used to control actual speed of player
     public float speed;
     private Vector3 myDir;
+    public bool isAlive = true; 
     // Start is called before the first frame update
     void Start()
     {
@@ -29,14 +30,14 @@ public class playerController : MonoBehaviour
                                       // Debug.Log(myDir);
         return myDir; //return the value
     }
-    public void onCollisionEnter2D(Collision2D Collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("other " + Collision.gameObject.name);
-        Debug.Log("other tag " + Collision.gameObject.tag);
-        if (Collision.gameObject.tag == "collectible1")
+        //Debug.Log("hit");
+        if (collision.gameObject.tag == "projectile")
         {
-            
-
+            isAlive = false; 
+            //Debug.Log("other " + collision.gameObject.name);
+            //Debug.Log("other tag " + collision.gameObject.tag);
         }
 
     }

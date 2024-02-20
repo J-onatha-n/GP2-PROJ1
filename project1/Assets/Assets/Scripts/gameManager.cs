@@ -10,13 +10,19 @@ public class gameManager : MonoBehaviour
     public float timer;
     public float timeLimit;
     public int score;
+    public playerController alive;
 
     [Header("NPC vars")]
-    public GameObject collectible1;
-    public float spawnInterval;
-    public float spawnTimer;
-    public Vector2 spawnXBounds;
-    public Vector2 spawnYBounds;
+    public GameObject collectible;
+    public GameObject projectile;
+    public float projectileTimer;
+    public float projectileInterval;
+    public float collectibleTimer;
+    public float collectibleInterval;   
+    public Vector2 spawnXBounds1;
+    public Vector2 spawnYBounds1;
+    public Vector2 spawnXBounds2;
+    public Vector2 spawnYBounds2;
     public Rigidbody2D myBody; 
     [Header("UI/UX Vars")]
     public TextMeshProUGUI TitleText;
@@ -24,7 +30,7 @@ public class gameManager : MonoBehaviour
     //to design a state machine, first we need to define a subclass of enum - GameState
     public enum GameState
     {
-        GAMESTART, PLAYING, GAMEOVER //we can pass it as many states as we want here
+        GAMESTART, PLAYING, GAMEOVER, LOSTSCREEN //we can pass it as many states as we want here
     };
     //declare an actual instance of GameState for the gameManager to use
     public GameState myGameState;
@@ -34,7 +40,7 @@ public class gameManager : MonoBehaviour
     {
         myGameState = GameState.GAMESTART;
         myPlayer.SetActive(false);
-        collectible1.SetActive(false);
+        collectible.SetActive(false);
         TitleText.text = "Press [SPACE] to start";
     }
 
@@ -58,7 +64,8 @@ public class gameManager : MonoBehaviour
                 //timer is global, spawnTimer tracks collectibles
                 #region PLAYING_code
                 timer += Time.deltaTime;
-                spawnTimer += Time.deltaTime;
+                collectibleTimer += Time.deltaTime;
+                projectileTimer += Time.deltaTime;
 
                 //check against timeLimit, end the game if we're at time
                 if (timer > timeLimit)
@@ -67,17 +74,44 @@ public class gameManager : MonoBehaviour
                 }
 
                 //this is the world position where our collectible spawns
-                float x = Random.Range(spawnXBounds.x, spawnXBounds.y);
-                float y = Random.Range(spawnYBounds.x, spawnYBounds.y);
-                Vector3 targetPos = new Vector3(x, y, 0);
+                float x1 = Random.Range(spawnXBounds1.x, spawnXBounds1.y);
+                float y1 = Random.Range(spawnYBounds1.x, spawnYBounds1.y);
+                float x2 = Random.Range(spawnXBounds2.x, spawnXBounds2.y);
+                float y2 = Random.Range(spawnYBounds2.x, spawnYBounds2.y);
+                Vector3 targetPos1 = new Vector3(x1, y1, 0);
+                Vector3 targetPos2 = new Vector3(x2, y2, 0);
 
                 //instantiate and reset timer when condition is met
-                if (spawnTimer > spawnInterval)
+                if (collectibleTimer > collectibleInterval)
                 {
-                    Instantiate(collectible1, targetPos, Quaternion.identity);
-                    spawnTimer = 0;
+                    Instantiate(collectible, targetPos1, Quaternion.identity);
+                    collectibleTimer = 0;
                 }
+                if (projectileTimer > projectileInterval)
+                {
+                    Instantiate(projectile, targetPos2, Quaternion.identity);
+                    projectileTimer = 0;
+                }
+                if (alive.isAlive == false) {
+                    LostScreen();
+                }
+                // destroys excess objects 
+                /*GameObject[] enemyObj = GameObject.FindGameObjectsWithTag("collectible");
+
+                for (int i = 0; 20  < enemyObj.Length; i++)
+                {
+                    Destroy(enemyObj[i]);
+                }
+                */
                 #endregion
+                break;
+            
+            case GameState.LOSTSCREEN:
+                //code for losing the game
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    EnterPlaying();
+                }
                 break;
 
             case GameState.GAMEOVER:
@@ -86,28 +120,34 @@ public class gameManager : MonoBehaviour
                 {
                     EnterPlaying();
                 }
-
                 break;
 
         }
-    }
+    } 
 
     //state change for playing mode, turn on players, disable any start menu logic
     void EnterPlaying()
     {
-        GameObject[] enemyObj = GameObject.FindGameObjectsWithTag("projectile");
-        
-        for (int i = 0; 1 < enemyObj.Length; i++) 
-        {
-            Destroy(enemyObj[i]);
-        }
-
+        alive.isAlive = true;
         timer = 0f;
-        collectible1.SetActive(true);
+        collectible.SetActive(true);
+        projectile.SetActive(true);
         myGameState = GameState.PLAYING;
         myPlayer.SetActive(true);
         TitleText.enabled = false;
         myPlayer.transform.position = new Vector3(0f, -3.5f, 0f); 
+    }
+
+    void LostScreen()
+    {
+        collectible.SetActive(false);
+        projectile.SetActive(false);
+        TitleText.enabled = true;
+        TitleText.text = "YOU LOST. Press [SPACE] to try again.";
+        myPlayer.SetActive(false);
+        myGameState = GameState.LOSTSCREEN;
+         
+
     }
 
     void EnterFinale()
@@ -120,4 +160,4 @@ public class gameManager : MonoBehaviour
     }
 }
 
-//newObj.GetComponent<enemyController>().myPlayer = myPlayer; 
+//newObj.GetComponent<enemyController>().myPlayer = myPlayer; get component of gravity from rigidbody

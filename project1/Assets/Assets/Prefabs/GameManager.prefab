@@ -44,6 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fcd07e8cb44de944aa1ae62d4671569, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collictable1: {fileID: 0}
-  myPlayer: {fileID: 0}
+  myPlayer: {fileID: 240760696127415802, guid: d54a1c8ebc2bb074b920615270eb5495, type: 3}
   timer: 0
+  timeLimit: 0
+  score: 0
+  collectible: {fileID: 7081901834525040828, guid: 382061d03f28e3d4e8e30e92e406c08b, type: 3}
+  projectile: {fileID: 349663709644309187, guid: 215a123684c7fcd4683ed1776142ed57, type: 3}
+  projectileTimer: 0
+  projectileInterval: 0
+  collectibleTimer: 0
+  collectibleInterval: 0
+  spawnXBounds: {x: 0, y: 0}
+  spawnYBounds: {x: 0, y: 0}
+  myBody: {fileID: 0}
+  TitleText: {fileID: 0}
+  myGameState: 0
