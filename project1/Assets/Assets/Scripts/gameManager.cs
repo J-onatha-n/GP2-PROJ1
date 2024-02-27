@@ -10,7 +10,7 @@ public class gameManager : MonoBehaviour
     public float timer;
     public float timeLimit;
     public int score;
-    public playerController alive;
+    public playerController PC;
 
     [Header("NPC vars")]
     public GameObject projectile;
@@ -26,6 +26,7 @@ public class gameManager : MonoBehaviour
     [Header("UI/UX Vars")]
     public TextMeshProUGUI TitleText;
     public TextMeshProUGUI TimerText;
+    public TextMeshProUGUI CollectedText; 
 
     //to design a state machine, first we need to define a subclass of enum - GameState
     public enum GameState
@@ -42,6 +43,8 @@ public class gameManager : MonoBehaviour
         myPlayer.SetActive(false);
         collectible.SetActive(false);
         TitleText.text = "Use [A] [S] to move. Press [SPACE] to start";
+        
+        
 
     }
 
@@ -53,7 +56,7 @@ public class gameManager : MonoBehaviour
         {
             //each case can be seen as a single unique position of the lightswitch
             case GameState.GAMESTART:
-                if (Input.GetKey(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
                     EnterPlaying();
                 }
@@ -64,12 +67,27 @@ public class gameManager : MonoBehaviour
             case GameState.PLAYING:
                 //timer is global, spawnTimer tracks collectibles
                 #region PLAYING_code
-                timer += Time.deltaTime;
+                timer -= Time.deltaTime;
                 collectibleTimer += Time.deltaTime;
                 projectileTimer += Time.deltaTime;
+                TimerText.text = timer.ToString("F2");
+                CollectedText.text = "Collected: " + PC.collected.ToString(); 
+                
+                if (timer < 15)
+                {
+                    projectileInterval = .30f; 
+                }
+                if (timer < 10)
+                {
+                    projectileInterval = .20f;
+                }
+                if (timer < 5)
+                {
+                    projectileInterval = .10f;
+                }
 
                 //check against timeLimit, end the game if we're at time
-                if (timer > timeLimit)
+                if (timer < timeLimit)
                 {
                     EnterFinale();
                 }
@@ -94,7 +112,7 @@ public class gameManager : MonoBehaviour
                     Instantiate(projectile, targetPos2, Quaternion.identity);
                     projectileTimer = 0;
                 }
-                if (alive.isAlive == false) {
+                if (PC.isAlive == false) {
                     LostScreen();
                 }
                 // destroys excess objects 
@@ -116,7 +134,7 @@ public class gameManager : MonoBehaviour
                 projectile.SetActive(false);
                 if (Input.GetKey(KeyCode.Space))
                 {
-                    EnterPlaying();
+                    EnterStart();
                 }
                 break;
 
@@ -124,7 +142,7 @@ public class gameManager : MonoBehaviour
                 //code for the ending goes here
                 if (Input.GetKey(KeyCode.Space))
                 {
-                    EnterPlaying();
+                    EnterStart();
                 }
                 break;
 
@@ -132,28 +150,47 @@ public class gameManager : MonoBehaviour
     } 
 
     //state change for playing mode, turn on players, disable any start menu logic
+    void EnterStart()
+    {
+        myGameState = GameState.GAMESTART;
+        collectible.SetActive(false);
+        projectile.SetActive(false);
+        myPlayer.SetActive(false);
+        TitleText.text = "Use [A] [S] to move. Press [SPACE] to start";
+    }
     void EnterPlaying()
     {
-        alive.isAlive = true;
-        timer = 0f;
+        myGameState = GameState.PLAYING;
+        myPlayer.transform.position = new Vector3(0f, -3.5f, 0f);
+
+        timer = 20f;
+        projectileInterval = .5f;
+
+        PC.collected = 0; 
+        PC.isAlive = true;
+
+        
         collectible.SetActive(true);
         projectile.SetActive(true);
-        myGameState = GameState.PLAYING;
         myPlayer.SetActive(true);
+
+
         TitleText.enabled = false;
         TimerText.enabled = true;
-        TimerText.text = timer.ToString("F0");
-        myPlayer.transform.position = new Vector3(0f, -3.5f, 0f); 
+        CollectedText.enabled = true;
+
+       
     }
 
     void LostScreen()
     {
         TitleText.enabled = true;
         TimerText.enabled = false;
+        CollectedText.enabled = false;
         TitleText.text = "YOU LOST. Press [SPACE] to try again.";
         myPlayer.SetActive(false);
         myGameState = GameState.LOSTSCREEN;
-        Debug.Log(timer.ToString());
+        
          
 
     }
@@ -163,11 +200,10 @@ public class gameManager : MonoBehaviour
         myPlayer.SetActive(false);
         TitleText.enabled = true;
         TimerText.enabled = false;
+        CollectedText.enabled = false;
         myGameState = GameState.GAMEOVER;
-        TitleText.text = "CONGRATS, You Survived. Press [SPACE] to restart";
+        TitleText.text = "CONGRATS, You Survived. Press [SPACE] to restart" + "<br>Items Collected: " + PC.collected;
         
         
     }
 }
-
-//newObj.GetComponent<enemyController>().myPlayer = myPlayer; get component of gravity from rigidbody

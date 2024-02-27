@@ -8,6 +8,7 @@ public class playerController : MonoBehaviour
     public float speed;
     private Vector3 myDir;
     public bool isAlive = true;
+    public int collected; 
 
     // Start is called before the first frame update
     void Start()
@@ -42,16 +43,19 @@ public class playerController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
         //Debug.Log("hit");
         if (collision.gameObject.CompareTag("projectile"))
         {
-            isAlive = false; 
+            isAlive = false;
+            
             //Debug.Log("other " + collision.gameObject.name);
             //Debug.Log("other tag " + collision.gameObject.tag);
         }
         if (collision.gameObject.CompareTag("collectible"))
         {
-            Debug.Log("collected");
+            collected++;
+            Debug.Log(collected + " collected");
             Destroy(collision.gameObject);
         }
 
