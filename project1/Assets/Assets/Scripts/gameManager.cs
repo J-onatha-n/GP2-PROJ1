@@ -40,10 +40,7 @@ public class gameManager : MonoBehaviour
     void Start()
     {
         myGameState = GameState.GAMESTART;
-        myPlayer.SetActive(false);
-        collectible.SetActive(false);
-        TitleText.text = "Use [A] [S] to move. Press [SPACE] to start";
-        
+        EnterStart();
         
 
     }
@@ -156,7 +153,7 @@ public class gameManager : MonoBehaviour
         collectible.SetActive(false);
         projectile.SetActive(false);
         myPlayer.SetActive(false);
-        TitleText.text = "Use [A] [S] to move. Press [SPACE] to start";
+        TitleText.text = "Use [A] [S] to move. Press [SPACE] to start. Evade the red ovals and collect the white squares.";
     }
     void EnterPlaying()
     {
@@ -190,8 +187,10 @@ public class gameManager : MonoBehaviour
         TitleText.text = "YOU LOST. Press [SPACE] to try again.";
         myPlayer.SetActive(false);
         myGameState = GameState.LOSTSCREEN;
-        
-         
+        Destroy(GameObject.FindWithTag("collectible"));
+        Destroy(GameObject.FindWithTag("projectile"));
+
+
 
     }
 
@@ -203,7 +202,10 @@ public class gameManager : MonoBehaviour
         CollectedText.enabled = false;
         myGameState = GameState.GAMEOVER;
         TitleText.text = "CONGRATS, You Survived. Press [SPACE] to restart" + "<br>Items Collected: " + PC.collected;
-        
-        
+
+        Destroy(GameObject.FindWithTag("collectible"));
+        Destroy(GameObject.FindWithTag("projectile"));
+
+
     }
 }
